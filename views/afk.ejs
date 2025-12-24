@@ -1,0 +1,151 @@
+<%- include('./components/wrapper', { title: 'AFK Rewards'}) %>
+<main class="min-h-screen bg-gray-900">
+  <div class="py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Header -->
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-white">AFK Rewards 💰</h1>
+        <p class="mt-2 text-gray-400">Earn coins while you're away!</p>
+      </div>
+
+      <!-- Stats Card -->
+      <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden border border-gray-700 mb-6">
+        <div class="p-6">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Current Balance -->
+            <div class="bg-gray-700/50 rounded-lg p-4">
+              <h2 class="text-gray-400 text-sm font-medium">Current Balance</h2>
+              <p class="mt-2 text-2xl font-semibold text-white">
+                <span id="currentBalance"><%= user.coins %></span> coins
+              </p>
+            </div>
+            
+            <!-- Earning Rate -->
+            <div class="bg-gray-700/50 rounded-lg p-4">
+              <h2 class="text-gray-400 text-sm font-medium">Earning Rate</h2>
+              <p class="mt-2 text-2xl font-semibold text-white">
+                <span id="earningRate"><%= afkConfig.rewardAmount %></span> coins/<%=
+                    afkConfig.rewardTime >= 3600 ? 'h' :
+                    afkConfig.rewardTime >= 60 ? 'min' :
+                    's'
+                %>
+              </p>
+            </div>
+
+            <!-- Next Reward -->
+            <div class="bg-gray-700/50 rounded-lg p-4">
+              <h2 class="text-gray-400 text-sm font-medium">Next Reward In</h2>
+              <p class="mt-2 text-2xl font-semibold text-white">
+                <span id="nextReward">60</span> seconds
+              </p>
+            </div>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="mt-6">
+            <div class="w-full bg-gray-700 rounded-full h-4">
+              <div id="progressBar" class="bg-purple-500 rounded-full h-4 transition-all duration-1000" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <!-- Status Message -->
+          <div class="mt-4 text-center">
+            <p id="statusMessage" class="text-green-400">AFK Mode Active - Earning coins...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+    class AfkClient {
+        constructor(userId) {
+            this.userId = userId;
+            this.ws = null;
+            this.progressBar = document.getElementById('progressBar');
+            this.nextReward = document.getElementById('nextReward');
+            this.currentBalance = document.getElementById('currentBalance');
+            this.statusMessage = document.getElementById('statusMessage');
+            this.progress = 0;
+            this.interval = null;
+            this.reconnectAttempts = 0;
+            this.maxReconnectAttempts = 5;
+            this.reconnectDelay = 1000;
+        }
+
+        startConnection() {
+            if (this.ws && this.ws.readyState === WebSocket.OPEN) return;
+            
+            this.ws = new WebSocket(`${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/afkws?userId=<%= user.id.toString() %>`);
+
+            this.ws.onopen = () => {
+                console.log('WebSocket connected');
+                this.reconnectAttempts = 0;
+                this.reconnectDelay = 1000;
+                this.startProgressBar();
+                this.statusMessage.textContent = 'AFK Enabled';
+                this.statusMessage.className = 'text-green-400';
+            };
+
+            this.ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                if (data.type === 'reward') {
+                    this.updateBalance(data.newBalance, data.earned);
+                    this.resetProgress();
+                }
+            };
+
+            this.ws.onclose = () => {
+                if (this.interval) clearInterval(this.interval);
+                this.statusMessage.textContent = `Disconnected - Attempt ${this.reconnectAttempts + 1}/${this.maxReconnectAttempts}`;
+                this.statusMessage.className = 'text-red-400';
+                this.ws = null;
+
+                if (this.reconnectAttempts < this.maxReconnectAttempts) {
+                    setTimeout(() => {
+                        this.reconnectAttempts++;
+                        this.reconnectDelay *= 2;
+                        this.startConnection();
+                    }, this.reconnectDelay);
+                } else {
+                    this.statusMessage.textContent = 'Connection failed - Please refresh the page';
+                }
+            };
+
+            this.ws.onerror = (error) => {
+                console.error('WebSocket Error:', error);
+            };
+        }
+
+        startProgressBar() {
+            if (this.interval) clearInterval(this.interval);
+            
+            this.interval = setInterval(() => {
+                this.progress = (this.progress + 1) % <%= afkConfig.rewardTime %>;
+                this.progressBar.style.width = `${(this.progress / <%= afkConfig.rewardTime %>) * 100}%`;
+                this.nextReward.textContent = `${<%= afkConfig.rewardTime %> - this.progress}s`;
+            }, 1000);
+        }
+
+        resetProgress() {
+            this.progress = 0;
+            this.progressBar.style.width = '0%';
+            this.nextReward.textContent = `${<%= afkConfig.rewardTime %>}s`;
+        }
+
+        updateBalance(newBalance, earned) {
+            this.currentBalance.textContent = newBalance;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const userId = "<%= user.id.toString() %>";
+        const afkClient = new AfkClient(userId);
+        setTimeout(() => {
+            afkClient.startConnection();
+        }, 1000);
+    });
+    </script>
+
+<%- include('./components/footer') %>

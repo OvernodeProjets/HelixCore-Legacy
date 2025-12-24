@@ -1,0 +1,20 @@
+[
+    {
+      "id": 3,
+      "name": "Minecraft Java Edition | Paper",
+      "description": "Minecraft Java Edition",
+      "icon": "🎮",
+      "minResources": {
+        "ram": 1,
+        "cpu": 100,
+        "disk": 1024
+      },
+      "docker_image": "ghcr.io/pterodactyl/yolks:java_21",
+      "startup": "java -Xms128M -XX:MaxRAMPercentage=85.0  -XX:+UnlockExperimentalVMOptions -XX:+UnlockDiagnosticVMOptions -XX:+AlwaysActAsServerClassMachine -XX:+AlwaysPreTouch -XX:+DisableExplicitGC -XX:+UseNUMA -XX:AllocatePrefetchStyle=3 -XX:NmethodSweepActivity=1 -XX:ReservedCodeCacheSize=256M -XX:-DontCompileHugeMethods -XX:+PerfDisableSharedMem -XX:+UseCriticalJavaThreadPriority -Dterminal.jline=false -Dterminal.ansi=true -jar {{SERVER_JARFILE}}",
+      "environment": {
+        "SERVER_JARFILE": "server.jar",
+        "BUILD_NUMBER": "latest",
+        "MINECRAFT_VERSION": "1.8.8"
+      }
+    }
+  ]

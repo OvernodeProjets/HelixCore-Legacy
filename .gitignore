@@ -1,0 +1,7 @@
+node_modules/
+dist/
+src/storage/database.db
+bun.lockb
+package-lock.json
+tsconfig.tsbuildinfo
+config.json

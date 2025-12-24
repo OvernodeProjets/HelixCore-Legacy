@@ -1,0 +1,327 @@
+<%- include('./components/wrapper', { title: 'Dashboard'}) %>
+<main class="min-h-screen bg-gray-900">
+  <div class="py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Welcome Message -->
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-white">Welcome back, <%= user.username %>! 👋</h1>
+        <p class="mt-2 text-gray-400">Here's an overview of your server resources and current infrastructure.</p>
+      </div>
+      <!-- Stats Grid -->
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <!-- CPU Card -->
+        <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden border border-gray-700">
+          <div class="p-5">
+            <div class="flex items-center">
+              <div class="bg-blue-500/10 rounded-lg p-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 002.25-2.25V6.75a2.25 2.25 0 00-2.25-2.25H6.75A2.25 2.25 0 004.5 6.75v10.5a2.25 2.25 0 002.25 2.25zm.75-12h9v9h-9v-9z" />
+                </svg>
+              </div>
+              <div class="ml-4">
+                <h2 class="text-gray-400 text-sm font-medium">CPU Resources</h2>
+                <p class="mt-2 text-2xl font-semibold text-white"><%= max.cpu - existing.cpu %>% Available</p>
+                <p class="text-sm text-gray-500">of <%= max.cpu %>% Total Capacity</p>
+              </div>
+            </div>
+            <div class="mt-4">
+              <a href="../store" class="text-sm text-blue-400 hover:text-blue-300 font-medium">Purchase Additional CPU →</a>
+            </div>
+          </div>
+        </div>
+      
+        <!-- RAM Card -->
+        <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden border border-gray-700">
+          <div class="p-5">
+            <div class="flex items-center">
+              <div class="bg-green-500/10 rounded-lg p-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z" />
+                </svg>
+              </div>
+              <div class="ml-4">
+                <h2 class="text-gray-400 text-sm font-medium">RAM Available</h2>
+                <p class="mt-2 text-2xl font-semibold text-white"><%= max.ram - existing.ram %>MB Available</p>
+                <p class="text-sm text-gray-500">of <%= max.ram %>MB Total Capacity</p>
+              </div>
+            </div>
+            <div class="mt-4">
+              <a href="../store" class="text-sm text-green-400 hover:text-green-300 font-medium">Purchase Additional RAM →</a>
+            </div>
+          </div>
+        </div>
+      
+        <!-- Disk Card -->
+        <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden border border-gray-700">
+          <div class="p-5">
+            <div class="flex items-center">
+              <div class="bg-purple-500/10 rounded-lg p-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+                </svg>
+              </div>
+              <div class="ml-4">
+                <h2 class="text-gray-400 text-sm font-medium">Disk Available</h2>
+                <p class="mt-2 text-2xl font-semibold text-white"><%= max.disk - existing.disk %>MB Available</p>
+                <p class="text-sm text-gray-500">of <%= max.disk %>MB Total Capacity</p>
+              </div>
+            </div>
+            <div class="mt-4">
+              <a href="../store" class="text-sm text-purple-400 hover:text-purple-300 font-medium">Purchase Additional Storage →</a>
+            </div>
+          </div>
+        </div>
+
+        <div id="hiddenCards" class="hidden col-span-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- Database Card -->
+        <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden border border-gray-700">
+          <div class="p-5">
+            <div class="flex items-center">
+              <div class="bg-yellow-500/10 rounded-lg p-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z" />
+                </svg>
+              </div>
+              <div class="ml-4">
+                <h2 class="text-gray-400 text-sm font-medium">Database Available</h2>
+                <p class="mt-2 text-2xl font-semibold text-white"><%= max.database - existing.database %> Available</p>
+                <p class="text-sm text-gray-500">of <%= max.database %> Total Capacity</p>
+              </div>
+            </div>
+            <div class="mt-4">
+              <a href="../store" class="text-sm text-yellow-400 hover:text-yellow-300 font-medium">Purchase Additional Databases →</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Backup Card -->
+        <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden border border-gray-700">
+          <div class="p-5">
+            <div class="flex items-center">
+              <div class="bg-red-500/10 rounded-lg p-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="m7.875 14.25 1.214 1.942a2.25 2.25 0 0 0 1.908 1.058h2.006c.776 0 1.497-.4 1.908-1.058l1.214-1.942M2.41 9h4.636a2.25 2.25 0 0 1 1.872 1.002l.164.246a2.25 2.25 0 0 0 1.872 1.002h2.092a2.25 2.25 0 0 0 1.872-1.002l.164-.246A2.25 2.25 0 0 1 16.954 9h4.636M2.41 9a2.25 2.25 0 0 0-.16.832V12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 12V9.832c0-.287-.055-.57-.16-.832M2.41 9a2.25 2.25 0 0 1 .382-.632l3.285-3.832a2.25 2.25 0 0 1 1.708-.786h8.43c.657 0 1.281.287 1.709.786l3.284 3.832c.163.19.291.404.382.632M4.5 20.25h15A2.25 2.25 0 0 0 21.75 18v-2.625c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125V18a2.25 2.25 0 0 0 2.25 2.25Z" />
+                </svg>
+              </div>
+              <div class="ml-4">
+                <h2 class="text-gray-400 text-sm font-medium">Backup Available</h2>
+                <p class="mt-2 text-2xl font-semibold text-white"><%= max.backup - existing.backup %> Available</p>
+                <p class="text-sm text-gray-500">of <%= max.backup %> Total Capacity</p>
+              </div>
+            </div>
+            <div class="mt-4">
+              <a href="../store" class="text-sm text-red-400 hover:text-red-300 font-medium">Purchase Additional Backups →</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Allocation Card -->
+        <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden border border-gray-700">
+          <div class="p-5">
+            <div class="flex items-center">
+              <div class="bg-indigo-500/10 rounded-lg p-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
+                </svg>
+              </div>
+              <div class="ml-4">
+                <h2 class="text-gray-400 text-sm font-medium">Allocation Available</h2>
+                <p class="mt-2 text-2xl font-semibold text-white"><%= max.allocation - existing.allocation %> Available</p>
+                <p class="text-sm text-gray-500">of <%= max.allocation %> Total Capacity</p>
+              </div>
+            </div>
+            <div class="mt-4">
+              <a href="../store" class="text-sm text-indigo-400 hover:text-indigo-300 font-medium">Purchase Additional Allocations →</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+        <!-- Blank Card -->
+        <div class="hidden md:block rounded-lg overflow-hidden">
+        </div>
+        
+        <!-- Servers Card -->
+        <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden border border-gray-700">
+          <div class="p-5">
+            <div class="flex items-center">
+              <div class="bg-indigo-500/10 rounded-lg p-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
+                </svg>
+              </div>
+              <div class="ml-4">
+                <h2 class="text-gray-400 text-sm font-medium">Servers Available</h2>
+                <p class="mt-2 text-2xl font-semibold text-white"><%= max.servers - existing.servers %> Available</p>
+                <p class="text-sm text-gray-500">of <%= max.servers %> Total Capacity</p>
+              </div>
+            </div>
+            <div class="mt-4">
+              <a href="../store" class="text-sm text-indigo-400 hover:text-indigo-300 font-medium">Purchase Additional Servers →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+        <!-- Toggle Cards -->
+        <button id="seeMoreBtn" class="text-gray-400 hover:text-white font-medium">
+          See More ↓
+        </button>
+
+      <!-- Quick Tips -->
+       <!--
+      <div class="mt-8 mb-8 bg-indigo-900/20 border border-indigo-800/30 rounded-lg p-4">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-indigo-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <div class="ml-3">
+            <h3 class="text-sm font-medium text-indigo-400">Pro Tips</h3>
+            <div class="mt-2 text-sm text-gray-400">
+              <ul class="list-disc pl-5 space-y-1">
+                <li>Monitor your resource usage regularly to optimize performance</li>
+                <li>Consider upgrading resources when usage exceeds 80% capacity</li>
+                <li>Enable backups for important data protection</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>-->
+
+      <!-- Servers Table -->
+      <div class="mt-8 pb-24">
+        <div class="bg-gray-800 shadow-lg rounded-lg overflow-hidden border border-gray-700">
+          <div class="px-6 py-4 border-b border-gray-700 flex justify-between items-center">
+            <h3 class="text-lg font-medium text-white">Server List</h3>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-700">
+              <thead class="bg-gray-900">
+                <tr>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Name</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">ID</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">CPU</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">RAM</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Disk</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider details-column hidden">Database</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider details-column hidden">Backup</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider details-column hidden">Allocation</th>
+                  <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="bg-gray-800 divide-y divide-gray-700">
+                <% if (servers.length == 0) { %>
+                  <tr>
+                    <td colspan="9" class="px-6 py-8 whitespace-nowrap text-sm text-center">
+                      <div class="text-gray-400 mb-2">No servers found yet</div>
+                      <div class="text-gray-500 text-xs">Get started by creating your first server!</div>
+                      <a href="../create-server" class="inline-block mt-4 px-4 py-2 border border-indigo-500 text-indigo-400 rounded-md hover:bg-indigo-500 hover:text-white transition-colors duration-200">Create Server</a>
+                    </td>
+                  </tr>
+                <% } else { %>
+                  <% for (let server of servers) { %>
+                  <tr class="hover:bg-gray-700/50 transition-colors">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
+                      <%= server.attributes.name %>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                      <%= server.attributes.identifier %>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                      <div class="flex items-center">
+                        <div class="w-16 bg-gray-700 rounded-full h-2">
+                          <div class="bg-blue-500 rounded-full h-2" style="width: <%= (server.attributes.limits.cpu / max.cpu) * 100 %>%"></div>
+                        </div>
+                        <span class="ml-2"><%= server.attributes.limits.cpu %>%</span>
+                      </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                      <div class="flex items-center">
+                        <div class="w-16 bg-gray-700 rounded-full h-2">
+                          <div class="bg-green-500 rounded-full h-2" style="width: <%= (server.attributes.limits.memory / max.ram) * 100 %>%"></div>
+                        </div>
+                        <span class="ml-2"><%= server.attributes.limits.memory %>MB</span>
+                      </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                      <div class="flex items-center">
+                        <div class="w-16 bg-gray-700 rounded-full h-2">
+                          <div class="bg-purple-500 rounded-full h-2" style="width: <%= (server.attributes.limits.disk / max.disk) * 100 %>%"></div>
+                        </div>
+                        <span class="ml-2"><%= server.attributes.limits.disk %>MB</span>
+                      </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400 details-column hidden">
+                      <div class="flex items-center">
+                        <div class="w-16 bg-gray-700 rounded-full h-2">
+                          <div class="bg-yellow-500 rounded-full h-2" style="width: <%= (server.attributes.feature_limits.databases / max.database) * 100 %>%"></div>
+                        </div>
+                        <span class="ml-2"><%= server.attributes.feature_limits.databases %></span>
+                      </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400 details-column hidden">
+                      <div class="flex items-center">
+                        <div class="w-16 bg-gray-700 rounded-full h-2">
+                          <div class="bg-red-500 rounded-full h-2" style="width: <%= (server.attributes.feature_limits.backups / max.backup) * 100 %>%"></div>
+                        </div>
+                        <span class="ml-2"><%= server.attributes.feature_limits.backups %></span>
+                      </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400 details-column hidden">
+                      <div class="flex items-center">
+                        <div class="w-16 bg-gray-700 rounded-full h-2">
+                          <div class="bg-indigo-500 rounded-full h-2" style="width: <%= (server.attributes.feature_limits.allocations / max.allocation) * 100 %>%"></div>
+                        </div>
+                        <span class="ml-2"><%= server.attributes.feature_limits.allocations %></span>
+                      </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <div class="flex justify-end space-x-3">
+                        <a href="../edit-server?id=<%= server.attributes.id %>" class="text-blue-400 hover:text-blue-300 transition-colors">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                          </svg>
+                        </a>
+                        <a href="../delete-server/<%= server.attributes.id %>" class="text-red-400 hover:text-red-300 transition-colors">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                  <% } %>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+              const seeMoreBtn = document.getElementById('seeMoreBtn');
+              const hiddenCards = document.getElementById('hiddenCards');
+              const detailsColumns = document.querySelectorAll('.details-column');
+              let isExpanded = false;
+          
+              seeMoreBtn.addEventListener('click', function() {
+                  detailsColumns.forEach(column => {
+                    column.classList.toggle('hidden');
+                  });
+
+                  isExpanded = !isExpanded;
+                  hiddenCards.classList.toggle('hidden');
+                  seeMoreBtn.innerHTML = isExpanded ? 'See Less ↑' : 'See More ↓';
+              });
+          });
+        </script>
+
+    </div>
+  </div>
+</main>
+
+<%- include('./components/footer') %>

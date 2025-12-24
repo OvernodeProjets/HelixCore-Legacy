@@ -1,0 +1,26 @@
+[
+    {
+        "id": "fr",
+        "name": "France",
+        "flag": "🇫🇷",
+        "idPterodactyl": 1,
+        "ping": 15,
+        "price": 0
+    },
+    {
+        "id": "us",
+        "name": "United States",
+        "flag": "🇺🇸",
+        "idPterodactyl": 2,
+        "ping": 90,
+        "price": 5
+    },
+    {
+        "id": "sg",
+        "name": "Singapore",
+        "flag": "🇸🇬",
+        "idPterodactyl": 3,
+        "ping": 150,
+        "price": 10
+    }
+]

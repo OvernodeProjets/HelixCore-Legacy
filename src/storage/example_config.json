@@ -1,0 +1,28 @@
+{
+    "website": {
+        "name": "HelixCore",
+        "port": "3000",
+        "secret": "my-secret-key",
+        "NODE_ENV": "development"
+    },
+    "discord": {
+        "callbackURL": "http://localhost:3000/auth/discord/callback",
+        "clientID": "0000000000003000000",
+        "clientSecret": "Pc00j000Z70v20t00ziK0G00_L0bD000vk9"
+    },
+    "provider": {
+        "host": "pterodactyl",
+        "url": "https://panel.overnode.fr",
+        "key": "ptla_k00000000nTmk000000000000og2f4jF0Uzoz",
+        "client_key": "ptlc_1zUrumW0000000000NZ7nan0eB20000000000000SoQxZLk"
+    },
+    "afk": {
+        "rewardAmount": 10,
+        "rewardTime": 10,
+        "reconnectAttempts": 5,
+        "reconnectDelay": 1000
+    },
+    "database": {
+        "url": "file:../src/storage/database.db"
+    }
+}

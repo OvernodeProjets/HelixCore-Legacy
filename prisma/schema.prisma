@@ -1,0 +1,95 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:../src/storage/database.db"
+}
+
+model User {
+  id            String   @id @default(uuid())
+  discord_id    String?
+  email         String   @unique
+  username      String
+  password      String?
+  avatar        String?
+  admin         Boolean  @default(false)
+  coins         Int      @default(0)
+  provider      String   @default("local")
+  pterodactylId String?
+  resources     Resources?
+  servers       Server[]
+  storeHistory  StoreHistory[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Resources {
+  id          String   @id @default(uuid())
+  cpu         Int      @default(0)
+  ram         Int      @default(0)
+  disk        Int      @default(0)
+  backup      Int      @default(0)
+  database    Int      @default(0)
+  allocation  Int      @default(0)
+  servers     Int      @default(0)
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+model Server {
+  id          String   @id @default(uuid())
+  name        String
+  identifier  String   @unique
+  cpu         Int
+  ram         Int
+  disk        Int
+  backup      Int
+  database    Int
+  allocation  Int
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  sid       String   @unique
+  data      String
+  expiresAt DateTime
+}
+
+model PageView {
+  id        Int      @id @default(autoincrement())
+  path      String
+  userId    String?
+  timestamp DateTime @default(now())
+  userAgent String?
+  ip        String?
+}
+
+model UserActivity {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  action    String
+  timestamp DateTime @default(now())
+}
+
+model SettingsAdmin {
+  id        Int      @id @default(autoincrement())
+  name      String
+  value     String
+}
+
+model StoreHistory {
+  id        Int      @id @default(autoincrement())
+  amount    Int
+  timestamp DateTime @default(now())
+  product   String
+  price     Int
+  status    String   @default("pending")
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+}

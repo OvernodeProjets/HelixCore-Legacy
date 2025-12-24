@@ -1,0 +1,317 @@
+<%- include('./components/wrapper', { title: 'Create Server'}) %>
+<main class="min-h-screen bg-gray-900">
+  <div class="py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Header -->
+      <div class="mb-8">
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-3xl font-bold text-white">Create Server 🎮</h1>
+            <p class="mt-2 text-gray-400">Choose your server configuration</p>
+          </div>
+          <div class="text-right">
+            <p class="text-sm text-gray-400">Your Balance</p>
+            <p class="text-2xl font-semibold text-white"><span id="currentBalance"><%= user.coins %></span> coins</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Server Creation Form -->
+      <form id="createServerForm" class="bg-gray-800 rounded-lg shadow-lg overflow-hidden border border-gray-700 p-6">
+        <!-- Server Name -->
+        <div class="mb-6">
+          <label class="block text-gray-400 text-sm font-medium mb-2">Server Name</label>
+          <input type="text" name="name" required
+            class="w-full bg-gray-700 border border-gray-600 rounded-md px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+        </div>
+
+        <!-- Location Selection -->
+        <div class="mb-6">
+          <label class="block text-gray-400 text-sm font-medium mb-2">Location</label>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <% locations.forEach(location => { %>
+            <div class="relative">
+              <input type="radio" name="location" id="location-<%= location.id %>" value="<%= location.id %>" 
+                     class="peer hidden" required>
+              <label for="location-<%= location.id %>" 
+                     class="block p-4 bg-gray-700 border border-gray-600 rounded-lg cursor-pointer 
+                            hover:bg-gray-600/50 transition-all duration-200
+                            peer-checked:border-purple-500 peer-checked:bg-purple-500/10">
+                <div class="flex items-center space-x-3">
+                  <div class="text-2xl"><%= location.flag %></div>
+                  <div class="flex-1">
+                    <span class="block font-medium text-white"><%= location.name %></span>
+                    <div class="flex items-center mt-1">
+                      <div class="flex items-center">
+                        <div class="w-2 h-2 rounded-full <%= location.ping < 50 ? 'bg-green-400' : location.ping < 100 ? 'bg-yellow-400' : 'bg-red-400' %>"></div>
+                        <span class="ml-1 text-sm text-gray-400"><%= location.ping %>ms</span>
+                      </div>
+                      <% if (location.price > 0) { %>
+                        <span class="ml-auto text-purple-400">+<%= location.price %> coins/h</span>
+                      <% } %>
+                    </div>
+                  </div>
+                </div>
+              </label>
+            </div>
+            <% }); %>
+          </div>
+        </div>
+
+        <!-- Server Type -->
+        <div class="mb-6">
+          <label class="block text-gray-400 text-sm font-medium mb-2">Server Type</label>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <% serverTypes.forEach(type => { 
+              const resourceExceeded = 
+                type.ram > userResources.max.ram ||
+                type.cpu > userResources.max.cpu ||
+                (userResources.existing.servers + 1 > userResources.max.servers);
+              const insufficientCoins = user.coins < type.price;
+            %>
+            <div class="relative">
+              <input type="radio" name="type" id="type-<%= type.id %>" value="<%= type.id %>" 
+                     class="peer hidden" required
+                     <%= (insufficientCoins || resourceExceeded) ? 'disabled' : '' %>>
+              <label for="type-<%= type.id %>" 
+                     class="block p-4 bg-gray-700 border border-gray-600 rounded-lg cursor-pointer 
+                            hover:bg-gray-600/50 transition-all duration-200
+                            peer-checked:border-purple-500 peer-checked:bg-purple-500/10
+                            <%= (insufficientCoins || resourceExceeded) ? 'opacity-50 cursor-not-allowed' : '' %>">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <div class="flex items-center">
+                      <span class="text-xl mr-2"><%= type.icon %></span>
+                      <span class="font-medium text-white"><%= type.name %></span>
+                    </div>
+                    <div class="mt-2 space-y-1">
+                      <div class="flex items-center text-sm text-gray-400">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                        RAM: <%= type.ram %>GB
+                      </div>
+                      <div class="flex items-center text-sm text-gray-400">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                        CPU: <%= type.cpu %>%
+                      </div>
+                    </div>
+                  </div>
+                  <span class="text-purple-400 text-lg font-semibold"><%= type.price %> coins/h</span>
+                </div>
+                <% if (insufficientCoins || resourceExceeded) { %>
+                  <div class="absolute inset-0 bg-gray-900/50 rounded-lg flex items-center justify-center">
+                    <span class="text-red-400 font-medium">
+                      <%= resourceExceeded ? 'Insufficient resources' : 'Insufficient coins' %>
+                    </span>
+                  </div>
+                <% } %>
+              </label>
+            </div>
+            <% }); %>
+          </div>
+        </div>
+
+        <!-- Software Selection -->
+        <div class="mb-6">
+          <label class="block text-gray-400 text-sm font-medium mb-2">Software</label>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <% eggs.forEach(egg => { %>
+            <div class="relative">
+              <input type="radio" name="software" id="software-<%= egg.id %>" value="<%= egg.id %>" 
+                     class="peer hidden" required>
+              <label for="software-<%= egg.id %>" 
+                     class="block p-4 bg-gray-700 border border-gray-600 rounded-lg cursor-pointer 
+                            hover:bg-gray-600/50 transition-all duration-200
+                            peer-checked:border-purple-500 peer-checked:bg-purple-500/10">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <div class="flex items-center">
+                      <span class="text-2xl mr-2"><%= egg.icon %></span>
+                      <span class="font-medium text-white"><%= egg.name %></span>
+                    </div>
+                    <p class="mt-1 text-sm text-gray-400"><%= egg.description %></p>
+                  </div>
+                </div>
+                <div class="resource-check absolute inset-0 bg-gray-900/50 rounded-lg flex items-center justify-center hidden">
+                  <span class="text-red-400 font-medium">Insufficient resources</span>
+                </div>
+              </label>
+            </div>
+            <% }); %>
+          </div>
+        </div>
+
+        <!-- Total Cost Estimation -->
+        <div class="mb-6 p-4 bg-gray-700/50 rounded-lg">
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">Estimated hourly cost:</span>
+            <span class="text-xl font-semibold text-white">
+              <span id="estimatedCost">0</span> coins/h
+            </span>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" id="createButton"
+          class="w-full py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium 
+                 text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 
+                 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed disabled"
+        >
+          <%= canCreateServer === true ? 'Create Server' : 'Insufficient Resources' %>
+        </button>
+      </form>
+    </div>
+  </div>
+</main>
+
+
+<script>
+<%
+  const selectedType = null;
+%>
+const locations = <%- JSON.stringify(locations) %>;
+const serverTypes = <%- JSON.stringify(serverTypes) %>;
+const eggs = <%- JSON.stringify(eggs) %>;
+const canCreateServer = <%- JSON.stringify(canCreateServer) %>;
+
+const form = document.getElementById('createServerForm');
+const createButton = document.getElementById('createButton');
+const currentBalance = parseInt(document.getElementById('currentBalance').textContent);
+const estimatedCost = document.getElementById('estimatedCost');
+
+function updateEstimatedCost() {
+    const selectedLocation = document.querySelector('input[name="location"]:checked')?.value;
+    const selectedType = document.querySelector('input[name="type"]:checked')?.value;
+    
+    let totalCost = 0;
+    
+    if (selectedLocation) {
+        const location = locations.find(l => l.id === selectedLocation);
+        totalCost += location.price;
+    }
+    
+    if (selectedType) {
+        const type = serverTypes.find(t => t.id === selectedType);
+        totalCost += type.price;
+    }
+    
+    estimatedCost.textContent = totalCost.toFixed(1);
+    
+    const canCreate = totalCost > 0 && 
+                     totalCost <= currentBalance && 
+                     selectedLocation && 
+                     selectedType &&
+                     document.querySelector('input[name="name"]').value.trim() !== '';
+                     
+    createButton.disabled = !canCreate;
+    
+    if (totalCost > currentBalance) {
+        createButton.textContent = 'Insufficient coins';
+    } else if (!canCreate && canCreateServer === false) {
+        createButton.textContent = 'Insufficient resources';
+    } else if (!selectedLocation || !selectedType) {
+        createButton.textContent = 'Select configuration';
+    } else if (document.querySelector('input[name="name"]').value.trim() === '') {
+        createButton.textContent = 'Enter server name';
+    } else {
+        createButton.disabled = false;
+        createButton.textContent = 'Create Server';
+    }
+
+    if (canCreateServer === false) {
+        createButton.disabled = true;
+        createButton.textContent = 'Insufficient resources';
+    }
+}
+
+function updateSoftwareAvailability() {
+    const selectedTypeId = document.querySelector('input[name="type"]:checked')?.value;
+    const selectedType = selectedTypeId ? serverTypes.find(t => t.id === selectedTypeId) : null;
+
+    eggs.forEach(egg => {
+        const softwareInput = document.getElementById(`software-${egg.id}`);
+        const resourceCheck = softwareInput.parentElement.querySelector('.resource-check');
+        
+        const hasRequiredResources = !selectedType || 
+            (selectedType.ram >= egg.minResources.ram && selectedType.cpu >= egg.minResources.cpu);
+        
+        softwareInput.disabled = !hasRequiredResources;
+        resourceCheck.classList.toggle('hidden', hasRequiredResources);
+        
+        if (!hasRequiredResources && softwareInput.checked) {
+            softwareInput.checked = false;
+        }
+    });
+    
+    updateEstimatedCost();
+}
+
+form.querySelectorAll('input').forEach(input => {
+    input.addEventListener('change', updateEstimatedCost);
+    if (input.type === 'text') {
+        input.addEventListener('input', updateEstimatedCost);
+    }
+});
+
+form.querySelectorAll('input[name="type"]').forEach(input => {
+    input.addEventListener('change', () => {
+        updateSoftwareAvailability();
+        updateEstimatedCost();
+    });
+});
+
+updateEstimatedCost();
+updateSoftwareAvailability();
+
+form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = new FormData(form);
+    const totalCost = parseFloat(estimatedCost.textContent);
+    
+    if (totalCost > currentBalance) {
+        alert('Insufficient coins');
+        return;
+    }
+    
+    try {
+        createButton.disabled = true;
+        createButton.textContent = 'Creating server...';
+
+        const response = await fetch('/api/servers/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                estimatedCost: totalCost,
+                location: formData.get('location'),
+                name: formData.get('name'),
+                type: formData.get('type'),
+                egg: formData.get('software')
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+            // Redirect to the server page using the correct ID format
+            //window.location.href = `/servers/${data.serverId}`;
+            window.location.href = `/servers`;
+        } else {
+            throw new Error(data.error || 'Failed to create server');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert(error.message || 'An error occurred while creating the server');
+    } finally {
+        createButton.disabled = false;
+        createButton.textContent = 'Create Server';
+    }
+});
+</script>
+
+<%- include('./components/footer') %>

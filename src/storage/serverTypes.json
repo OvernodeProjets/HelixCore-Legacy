@@ -1,0 +1,38 @@
+[
+    {
+        "id": "basic",
+        "name": "Basic Server",
+        "icon": "🌱",
+        "disk": 1,
+        "backup": 0,
+        "database": 0,
+        "allocation": 0,
+        "ram": 1,
+        "cpu": 100,
+        "price": 10
+    },
+    {
+        "id": "premium",
+        "name": "Premium Server",
+        "icon": "⭐",
+        "disk": 20,
+        "backup": 2,
+        "database": 2,
+        "allocation": 2,
+        "ram": 4,
+        "cpu": 200,
+        "price": 20
+    },
+    {
+        "id": "pro",
+        "name": "Pro Server",
+        "icon": "💎",
+        "disk": 30,
+        "backup": 3,
+        "database": 3,
+        "allocation": 3,
+        "ram": 8,
+        "cpu": 300,
+        "price": 35
+    }
+]

@@ -1,0 +1,21 @@
+</div>
+<script type="text/javascript">
+  const startLoadTime = Date.now();
+  window.addEventListener("load", function() {
+      const loadTime = ((Date.now() - startLoadTime) / 1000).toFixed(3);
+      document.getElementById("loadtime").textContent = `${loadTime}s`;
+  });
+</script>
+<footer class="bg-gray-700/10 md:ml-64 max-w-10xl fixed mx-auto inset-x-0 bottom-0 backdrop-blur-md">
+  <div class="mx-auto container px-8 py-4 sm:flex sm:items-center sm:justify-between">
+    <p class="text-left text-sm text-gray-400 sm:text-left">
+      <!-- NOTICE | Unauthorized removal of credits is prohibited and violates the terms of the license. Overnode Projects reserves the right to take legal action if any credits are found to be removed. -->
+      Powered by <a class="text-white" href="https://github.com/OvernodeProjets/HelixCore">HelixCore</a>, a powerful & fast open-source client area.
+    </p>
+    <p class="text-right text-sm text-gray-400 sm:text-left mt-2 sm:mt-0">
+      <code>v1.0.0 - Loaded in <span id="loadtime">calculating...</span></code>
+    </p>
+  </div>
+</footer>
+</body>
+</html>
